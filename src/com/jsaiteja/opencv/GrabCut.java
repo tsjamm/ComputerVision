@@ -22,7 +22,7 @@ public class GrabCut {
 	public void getForeground(String in, String out)
 	{
 		Mat image = Highgui.imread(in);
-		//new ImageWindow(in);
+		ImageWindow.imshow("Input Image", in);
 		
 		int x = 600;
 		int y = 10;
@@ -42,7 +42,7 @@ public class GrabCut {
 		Mat output = new Mat(image.size(),CvType.CV_8UC3, new Scalar(255,255,255));
 		image.copyTo(output, result);
 		Highgui.imwrite(out, output);
-		new ImageWindow(out);
+		ImageWindow.imshow("Output Image", out);
 		
 	}
 	

@@ -26,7 +26,7 @@ public class FaceDetector {
 	{
 		CascadeClassifier faceDetector = new CascadeClassifier(ClassUtils.getCurrentProjectResourcesUrl(FaceDetector.class)+"lbpcascade_frontalface.xml");
 		Mat image = Highgui.imread(in);
-		new ImageWindow(in); //displays the image in a jframe
+		ImageWindow.imshow(in); //displays the image in a jframe
 		
 		if(image.empty())
 		{
@@ -54,7 +54,7 @@ public class FaceDetector {
 		
 		System.out.println("Saving the Detections to Output file...");
 		Highgui.imwrite(out, image);
-		new ImageWindow(out); //displays the image in a jframe
+		ImageWindow.imshow(out); //displays the image in a jframe
 		return;
 	}
 	
