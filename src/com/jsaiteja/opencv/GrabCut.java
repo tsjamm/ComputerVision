@@ -24,7 +24,7 @@ public class GrabCut {
 		Mat image = Highgui.imread(in);
 		ImageWindow.imshow("Input Image", in);
 		
-		int x = 600;
+		int x = 10;
 		int y = 10;
 		int w = image.cols() - (x+10);
 		int h = image.rows() - (y+10);
@@ -33,7 +33,7 @@ public class GrabCut {
 		Mat result = new Mat();
 		Mat bgModel = new Mat();
 		Mat fgModel = new Mat();
-		Mat masker = new Mat(1, 1, CvType.CV_8U, new Scalar(3.0));
+		Mat masker = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_PR_FGD));
 		
 		Imgproc.grabCut(image, result, border, bgModel, fgModel, 2, Imgproc.GC_INIT_WITH_RECT);
 		
