@@ -41,10 +41,10 @@ public class ImageExplorer {
 				break;
 			case 2:
 				//FaceDetector.getFaces(args[0], args[1]);
-				
+				GrabCut.runGrabCut(args[0], args[1]);
 				break;
 			case 3:
-				GrabCut.runGrabCut(args[0], args[1], args[2]);
+				
 				break;
 			default:
 				System.out.println("Number of arguments not usable.... enter correct number of args");
