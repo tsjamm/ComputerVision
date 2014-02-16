@@ -19,15 +19,11 @@ import com.jsaiteja.utils.ImageWindow;
  */
 public class GrabCut {
 	
-	public void getForeground(String in, String out)
+	public void getForeground(String in, String out, int x, int y, int w, int h)
 	{
 		Mat image = Highgui.imread(in);
 		ImageWindow.imshow("Input Image", in);
 		
-		int x = 10;
-		int y = 10;
-		int w = image.cols() - (x+10);
-		int h = image.rows() - (y+10);
 		Rect border = new Rect(x,y,w,h);
 		
 		Mat result = new Mat();
@@ -43,6 +39,17 @@ public class GrabCut {
 		image.copyTo(output, result);
 		Highgui.imwrite(out, output);
 		ImageWindow.imshow("Output Image", out);
+	
+	}
+	public void getForeground(String in, String out)
+	{
+		Mat image = Highgui.imread(in);
+		int x = 10;
+		int y = 10;
+		int w = image.cols() - (x+10);
+		int h = image.rows() - (y+10);
+		
+		getForeground(in,out,x,y,w,h);
 		
 	}
 	
