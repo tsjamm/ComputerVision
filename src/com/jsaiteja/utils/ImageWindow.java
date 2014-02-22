@@ -68,4 +68,19 @@ public class ImageWindow {
 	        e.printStackTrace();
 	    }
 	}
+	
+	public static void imGetSelection(Mat img)
+	{
+		SelectionArea selectionArea = new SelectionArea(img);
+
+		//JFrame.setDefaultLookAndFeelDecorated(true);
+		JFrame frame = new JFrame("Select an area on the image");
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().add(selectionArea);
+		frame.setSize(660, 570);
+		frame.setLocationRelativeTo( null );
+		frame.setVisible(true);
+		
+	}
+	
 }
