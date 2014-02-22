@@ -52,12 +52,13 @@ public class ImageWindow {
 	
 	public static void imshow(String name, Mat img)
 	{
-		Imgproc.resize(img, img, new Size(640, 480));
-	    MatOfByte matOfByte = new MatOfByte();
-	    Highgui.imencode(".png", img, matOfByte);
-	    byte[] byteArray = matOfByte.toArray();
-	    BufferedImage bufImage = null;
-	    try {
+		try {
+			Imgproc.resize(img, img, new Size(640, 480));
+		    MatOfByte matOfByte = new MatOfByte();
+		    Highgui.imencode(".png", img, matOfByte);
+		    byte[] byteArray = matOfByte.toArray();
+		    BufferedImage bufImage = null;
+	    
 	        InputStream in = new ByteArrayInputStream(byteArray);
 	        bufImage = ImageIO.read(in);
 	        JFrame frame = new JFrame();
