@@ -191,18 +191,27 @@ public class SeamEstimator implements SelectionListener {
 		
 		Mat result1 = new Mat();
 		Mat result2 = new Mat();
+		Mat result3 = new Mat();
 		Mat bgModel = new Mat();
 		Mat fgModel = new Mat();
 		Mat masker1 = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_PR_FGD));
 		Mat masker2 = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_BGD));
+		Mat masker3 = new Mat(1, 1, CvType.CV_8U, new Scalar(Imgproc.GC_PR_BGD));
 		System.out.println("mat cols "+image1.cols());
 		System.out.println("mat rows "+image1.rows());
 		Imgproc.grabCut(image1, result1, border, bgModel, fgModel, 2, Imgproc.GC_INIT_WITH_RECT);
 		result2 = result1.clone();
+		result3 = result1.clone();
 		Core.compare(result1, masker1, result1, Core.CMP_EQ);
 		Core.compare(result2, masker2, result2, Core.CMP_EQ);
+		Core.compare(result3, masker3, result3, Core.CMP_EQ);
 		
-		
+		//this commented logic did not work well...
+//		Mat clone = new Mat();
+//		image2.copyTo(clone,result2);
+//		image2.copyTo(clone, result3);
+//		image1.copyTo(clone,result1);
+//		image1 = clone;
 		
 		Mat G = new Mat();
 		
@@ -216,6 +225,8 @@ public class SeamEstimator implements SelectionListener {
 		List<Mat> lpR1 = new ArrayList<Mat>();
 		List<Mat> gpR2 = new ArrayList<Mat>();
 		List<Mat> lpR2 = new ArrayList<Mat>();
+		List<Mat> gpR3 = new ArrayList<Mat>();
+		List<Mat> lpR3 = new ArrayList<Mat>();
 		
 		G = image1.clone();
 		gpA.add(G.clone());
@@ -248,6 +259,14 @@ public class SeamEstimator implements SelectionListener {
 		{
 			Imgproc.pyrDown(G, G);
 			gpR2.add(G.clone());
+		}
+		
+		G = result3.clone();
+		gpR3.add(G.clone());
+		for(int i=0;i<6;i++)
+		{
+			Imgproc.pyrDown(G, G);
+			gpR3.add(G.clone());
 		}
 		
 		Mat GE = new Mat();
@@ -287,6 +306,15 @@ public class SeamEstimator implements SelectionListener {
 			lpR2.add(GE.clone());
 		}
 		
+		lpR3.add(gpR3.get(5).clone());
+		for(int i=5;i>0;i--)
+		{
+			Imgproc.pyrUp(gpR3.get(i), GE);
+			//Core.subtract(gpR3.get(i-1), GE, L);
+			//lpR3.add(L.clone());
+			lpR3.add(GE.clone());
+		}
+		
 		List<Mat> LS = new ArrayList<Mat>();
 		
 		for(int i=0;i<lpA.size();i++)
@@ -295,12 +323,14 @@ public class SeamEstimator implements SelectionListener {
 			Mat two = lpB.get(i).clone();
 			Mat res1 = lpR1.get(i).clone();
 			Mat res2 = lpR2.get(i).clone();
+			Mat res3 = lpR3.get(i).clone();
 			
 			//Mat combine = two.clone();
 			
 			Mat combine = new Mat();
 			
 			two.copyTo(combine, res2);
+			two.copyTo(combine, res3);
 			
 			one.copyTo(combine, res1);
 			
