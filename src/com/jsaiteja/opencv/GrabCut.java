@@ -58,7 +58,7 @@ public class GrabCut implements SelectionListener{
 	}
 	
 	@Override
-	public void getSelection(Rect selection) {
+	public Mat getSelection(Rect selection) {
 		
 		System.out.println("in grabcut's getselection...");
 		
@@ -79,5 +79,7 @@ public class GrabCut implements SelectionListener{
 		if(writeToFile)
 			Highgui.imwrite(out, output);
 		ImageWindow.imshow("Output Image", out);
+		
+		return output;
 	}
 }

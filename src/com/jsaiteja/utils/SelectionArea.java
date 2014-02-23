@@ -120,7 +120,7 @@ public class SelectionArea extends JPanel
 			e.printStackTrace();
 		}
 		g2d = (Graphics2D)image.getGraphics();
-		g2d.setColor(Color.BLACK);
+		g2d.setColor(Color.GREEN);
 	}
 
 	public void addRectangle(int x, int y, int width, int height, Color color)
