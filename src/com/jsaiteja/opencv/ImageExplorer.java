@@ -8,6 +8,9 @@ import org.opencv.core.Core;
 import com.jsaiteja.utils.ClassUtils;
 
 /**
+ * This class is not needed anymore...
+ * just a dummy test class
+ * 
  * @author SaiTeja
  *
  */
@@ -41,10 +44,10 @@ public class ImageExplorer {
 				break;
 			case 2:
 				//FaceDetector.getFaces(args[0], args[1]);
-				GrabCut.runGrabCut(args[0], args[1]);
+				//GrabCut.runGrabCut(args[0], args[1]);
 				break;
 			case 3:
-				Blender.runEstimator(args[0],args[1],args[2]);
+				//Blender.runEstimator(args[0],args[1],args[2]);
 				break;
 			default:
 				System.out.println("Number of arguments not usable.... enter correct number of args");
@@ -63,7 +66,7 @@ public class ImageExplorer {
 		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
 		
 		ImageExplorer ie = new ImageExplorer();
-		ie.run(args);
+		//ie.run(args);
 
 		System.out.println("main of ImageExplorer ended...");
 	}

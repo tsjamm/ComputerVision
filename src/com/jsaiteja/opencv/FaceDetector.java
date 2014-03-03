@@ -58,4 +58,20 @@ public class FaceDetector {
 		return;
 	}
 	
+	public static void main(String args[])
+	{
+		System.out.println("main of FaceDetector started...");
+		System.out.println("Number of Arguments = "+args.length);
+		
+		//Need to call this at least once or will result in exception
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
+		if(args.length==2)
+			FaceDetector.getFaces(args[0], args[1]);
+		else
+			System.out.println("Usage: 2 arguments, input and output paths");
+
+		System.out.println("main of FaceDetector ended...");
+	}
+	
 }

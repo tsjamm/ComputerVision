@@ -357,4 +357,20 @@ public class Blender implements SelectionListener {
 		return output;
 	}
 	
+	public static void main(String args[])
+	{
+		System.out.println("main of Blender started...");
+		System.out.println("Number of Arguments = "+args.length);
+		
+		//Need to call this at least once or will result in exception
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
+		if(args.length==3)
+			Blender.runEstimator(args[0],args[1],args[2]);
+		else
+			System.out.println("Usage: 3 arguments, input1, input2 and output paths");
+
+		System.out.println("main of Blender ended...");
+	}
+	
 }

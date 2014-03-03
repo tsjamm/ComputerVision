@@ -82,4 +82,20 @@ public class GrabCut implements SelectionListener{
 		
 		return output;
 	}
+	
+	public static void main(String args[])
+	{
+		System.out.println("main of GrabCut started...");
+		System.out.println("Number of Arguments = "+args.length);
+		
+		//Need to call this at least once or will result in exception
+		System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
+		
+		if(args.length==2)
+			GrabCut.runGrabCut(args[0], args[1]);
+		else
+			System.out.println("Usage: 2 arguments, input and output paths");
+
+		System.out.println("main of GrabCut ended...");
+	}
 }
