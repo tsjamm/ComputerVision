@@ -25,6 +25,9 @@ import com.jsaiteja.utils.SelectionListener;
  */
 public class SeamEstimator implements SelectionListener {
 	
+	private static int PYRAMID_DEPTH = 1;
+	private static int PYRAMID_DEPTH_LESS1 = PYRAMID_DEPTH - 1;
+	
 	Mat image1,image2;
 	String in1,in2;
 	String out;
@@ -230,7 +233,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		G = image1.clone();
 		gpA.add(G.clone());
-		for(int i=0;i<6;i++)
+		for(int i=0;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrDown(G, G);
 			gpA.add(G.clone());
@@ -239,7 +242,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		G = image2.clone();
 		gpB.add(G.clone());
-		for(int i=0;i<6;i++)
+		for(int i=0;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrDown(G, G);
 			gpB.add(G.clone());
@@ -247,7 +250,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		G = result1.clone();
 		gpR1.add(G.clone());
-		for(int i=0;i<6;i++)
+		for(int i=0;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrDown(G, G);
 			gpR1.add(G.clone());
@@ -255,7 +258,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		G = result2.clone();
 		gpR2.add(G.clone());
-		for(int i=0;i<6;i++)
+		for(int i=0;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrDown(G, G);
 			gpR2.add(G.clone());
@@ -263,7 +266,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		G = result3.clone();
 		gpR3.add(G.clone());
-		for(int i=0;i<6;i++)
+		for(int i=0;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrDown(G, G);
 			gpR3.add(G.clone());
@@ -272,24 +275,24 @@ public class SeamEstimator implements SelectionListener {
 		Mat GE = new Mat();
 		Mat L = new Mat();
 		
-		lpA.add(gpA.get(5).clone());
-		for(int i=5;i>0;i--)
+		lpA.add(gpA.get(PYRAMID_DEPTH_LESS1).clone());
+		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpA.get(i), GE);
 			Core.subtract(gpA.get(i-1), GE, L);
 			lpA.add(L.clone());
 		}
 		
-		lpB.add(gpB.get(5).clone());
-		for(int i=5;i>0;i--)
+		lpB.add(gpB.get(PYRAMID_DEPTH_LESS1).clone());
+		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpB.get(i), GE);
 			Core.subtract(gpB.get(i-1), GE, L);
 			lpB.add(L.clone());
 		}
 		
-		lpR1.add(gpR1.get(5).clone());
-		for(int i=5;i>0;i--)
+		lpR1.add(gpR1.get(PYRAMID_DEPTH_LESS1).clone());
+		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR1.get(i), GE);
 			//Core.subtract(gpR1.get(i-1), GE, L);
@@ -297,8 +300,8 @@ public class SeamEstimator implements SelectionListener {
 			lpR1.add(GE.clone());
 		}
 		
-		lpR2.add(gpR2.get(5).clone());
-		for(int i=5;i>0;i--)
+		lpR2.add(gpR2.get(PYRAMID_DEPTH_LESS1).clone());
+		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR2.get(i), GE);
 			//Core.subtract(gpR2.get(i-1), GE, L);
@@ -306,8 +309,8 @@ public class SeamEstimator implements SelectionListener {
 			lpR2.add(GE.clone());
 		}
 		
-		lpR3.add(gpR3.get(5).clone());
-		for(int i=5;i>0;i--)
+		lpR3.add(gpR3.get(PYRAMID_DEPTH_LESS1).clone());
+		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR3.get(i), GE);
 			//Core.subtract(gpR3.get(i-1), GE, L);
@@ -340,7 +343,7 @@ public class SeamEstimator implements SelectionListener {
 		
 		Mat output = LS.get(0).clone();
 		System.out.println("output rows="+output.rows()+" cols="+output.cols());
-		for(int i=1;i<6;i++)
+		for(int i=1;i<PYRAMID_DEPTH;i++)
 		{
 			Imgproc.pyrUp(output, output);
 			Core.add(output, LS.get(i), output);
