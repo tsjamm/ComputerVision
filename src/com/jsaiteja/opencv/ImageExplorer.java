@@ -44,7 +44,7 @@ public class ImageExplorer {
 				GrabCut.runGrabCut(args[0], args[1]);
 				break;
 			case 3:
-				SeamEstimator.runEstimator(args[0],args[1],args[2]);
+				Blender.runEstimator(args[0],args[1],args[2]);
 				break;
 			default:
 				System.out.println("Number of arguments not usable.... enter correct number of args");

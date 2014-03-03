@@ -23,7 +23,7 @@ import com.jsaiteja.utils.SelectionListener;
  * @author SaiTeja
  * TODO
  */
-public class SeamEstimator implements SelectionListener {
+public class Blender implements SelectionListener {
 	
 	private static int PYRAMID_DEPTH = 1;
 	private static int PYRAMID_DEPTH_LESS1 = PYRAMID_DEPTH - 1;
@@ -33,7 +33,7 @@ public class SeamEstimator implements SelectionListener {
 	String out;
 	boolean writeToFile;
 	
-	public SeamEstimator()
+	public Blender()
 	{
 		SelectionArea.addListener(this);
 	}
@@ -176,7 +176,7 @@ public class SeamEstimator implements SelectionListener {
 	public static void runEstimator(String in1, String in2, String out)
 	{
 		System.out.println("Starting Estimator");
-		SeamEstimator se = new SeamEstimator();
+		Blender se = new Blender();
 		//se.halfCombine(in1, in2, out, true);
 		se.combine(in1, in2, out, true);
 		System.out.println("Completed Estimator");
