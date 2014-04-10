@@ -10,10 +10,11 @@ import org.opencv.core.Size;
 import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
-import com.jsaiteja.utils.GraphCutBoykovKolmogorov;
 import com.jsaiteja.utils.ImageWindow;
 import com.jsaiteja.utils.SelectionArea;
 import com.jsaiteja.utils.SelectionListener;
+import com.jsaiteja.utils.kolmogorov.GraphCut;
+import com.jsaiteja.utils.kolmogorov.Terminal;
 
 /**
  * @author SaiTeja
@@ -41,69 +42,10 @@ public class OptimalSeam implements SelectionListener {
 		
 		Rect border = selection;
 		
-		Mat graphCut;
-		Mat graphCutAndCutline;
+		Mat graphCut = new Mat();
 		
-		int overlapWidth = image1.cols()/2;
-		int xoffset = image1.cols() - overlapWidth;
 		
-		Mat noGraphCut = new Mat(image1.rows(),image1.cols()*2 - overlapWidth, image1.type());
 		
-		image1.copyTo(noGraphCut.submat(new Rect(0,0,image1.cols(),image1.rows())));
-		image1.copyTo(noGraphCut.submat(new Rect(xoffset,0,image1.cols(),image1.rows())));
-		
-		int estNodes = image1.rows()*overlapWidth;
-		int estEdges = estNodes*4;
-		
-		GraphCutBoykovKolmogorov g = new GraphCutBoykovKolmogorov(noGraphCut.cols(), noGraphCut.rows());
-		
-		for(int y=0;y<image1.rows();y++) {
-			g.setTWeight(0, y, 2<<32,0);//source-- leftmost column
-			g.setTWeight(overlapWidth-1, y, 0, 2<<32);//sink -- rightmost column
-		}
-		
-		for(int y=0;y<image1.rows();y++) {
-			for(int x=0;x< overlapWidth; x++) {
-				double[] a0 = image1.get(y, x+xoffset);
-				double[] b0 = image2.get(y, x);
-				double cap0 = 0;
-				for(int i=0;i<3;i++){
-					cap0 += Math.pow(b0[i]-a0[i],2);
-				}
-				cap0 = Math.sqrt(cap0);
-				
-				if(x+1< overlapWidth) {
-					double[] a1 = image1.get(y, x+xoffset+1);
-					double[] b1 = image2.get(y, x+1);
-					double cap1 = 0;
-					for(int i=0;i<3;i++){
-						cap1 += Math.pow(b1[i]-a1[i],2);
-					}
-					cap1 = Math.sqrt(cap1);
-					
-					g.setInternWeight(x+xoffset, y, x+1+xoffset, y, (int)(cap0+cap1));
-					g.setInternWeight(x+1+xoffset, y, x+xoffset, y, (int)(cap0+cap1));
-				}
-				
-				if(y+1< image1.rows()) {
-					double[] a2 = image1.get(y+1, x+xoffset);
-					double[] b2 = image2.get(y+1, x);
-					double cap2 = 0;
-					for(int i=0;i<3;i++){
-						cap2 += Math.pow(b2[i]-a2[i],2);
-					}
-					cap2 = Math.sqrt(cap2);
-					
-					g.setInternWeight(x, y, x, y+1, (int)(cap0+cap2));
-					g.setInternWeight(x, y+1, x, y, (int)(cap0+cap2));
-				}
-			}
-		}
-		g.doCut();
-		double flow = g.getFlow();
-		System.out.println("flow is "+flow);
-		
-		graphCut = noGraphCut.clone();
 		
 		if(writeToFile)
 			Highgui.imwrite(out, graphCut);
@@ -149,14 +91,11 @@ public class OptimalSeam implements SelectionListener {
 		int estEdges = estNodes*4;
 		System.out.println("EstNodes is "+estNodes);
 		System.out.println("EstEdges is "+estEdges);
-		GraphCutBoykovKolmogorov g = new GraphCutBoykovKolmogorov(overlapWidth, noGraphCut.rows());
+		GraphCut g = new GraphCut(estNodes, estEdges);
 		
 		for(int y=0;y<noGraphCut.rows();y++) {
-//			for(int x=0; x<overlapWidth;x++) {
-//				g.setTWeight(x,y,Integer.MAX_VALUE,0);
-//			}
-			g.setTWeight(0, y, Integer.MAX_VALUE,0);//source-- leftmost column
-			g.setTWeight(overlapWidth-1, y, 0, Integer.MAX_VALUE);//sink -- rightmost column
+			g.setTerminalWeights(y*overlapWidth, Integer.MAX_VALUE, 0);
+			g.setTerminalWeights(y*overlapWidth+overlapWidth-1, 0,Integer.MAX_VALUE);
 		}
 		
 		int rightCount=0;
@@ -186,7 +125,7 @@ public class OptimalSeam implements SelectionListener {
 					}
 					cap1 = Math.sqrt(cap1);
 					rightCount++;
-					g.setInternWeight(x, y, x+1, y, (cap0+cap1));
+					g.setEdgeWeight(y*overlapWidth+x, y*overlapWidth+x+1, (float)(cap0+cap1));
 				}
 				
 				//for bottom edge
@@ -199,21 +138,21 @@ public class OptimalSeam implements SelectionListener {
 					}
 					cap2 = Math.sqrt(cap2);
 					bottomCount++;
-					g.setInternWeight(x, y, x, y+1, (cap0+cap2));
+					g.setEdgeWeight(y*overlapWidth+x, (y+1)*overlapWidth+x, (float)(cap0+cap2));
 				}
 				//System.out.println("cap0="+cap0+"cap1="+cap1+"cap2="+cap2);
 			}
 		}
 		System.out.println("right = "+rightCount);
 		System.out.println("bottom = "+bottomCount);
-		g.doCut();
-		double flow = g.getFlow();
+		
+		double flow = g.computeMaximumFlow(true, null);
 		System.out.println("flow is "+flow);
 
-		//image1.copyTo(noGraphCut.submat(new Rect(0,0,image1.cols(),image1.rows())));
-		//image2.copyTo(noGraphCut.submat(new Rect(xoffset,0,image2.cols(),image2.rows())));
-		image2.submat(new Rect(overlapWidth,0,image2.cols()-overlapWidth,image2.rows())).copyTo(noGraphCut.submat(new Rect(xoffset+overlapWidth,0,image2.cols()-overlapWidth,image2.rows())));
-		image1.submat(new Rect(0,0,xoffset,image1.rows())).copyTo(noGraphCut.submat(new Rect(0,0,xoffset,image1.rows())));
+		image1.copyTo(noGraphCut.submat(new Rect(0,0,image1.cols(),image1.rows())));
+		image2.copyTo(noGraphCut.submat(new Rect(xoffset,0,image2.cols(),image2.rows())));
+		//image2.submat(new Rect(overlapWidth,0,image2.cols()-overlapWidth,image2.rows())).copyTo(noGraphCut.submat(new Rect(xoffset+overlapWidth,0,image2.cols()-overlapWidth,image2.rows())));
+		//image1.submat(new Rect(0,0,xoffset,image1.rows())).copyTo(noGraphCut.submat(new Rect(0,0,xoffset,image1.rows())));
 		
 		
 		graphCut = noGraphCut.clone();
@@ -222,16 +161,15 @@ public class OptimalSeam implements SelectionListener {
 		int sinkCount=0;
 		for(int y=0; y<noGraphCut.rows(); y++) {
 			for(int x=0; x<overlapWidth; x++) {
-				
-				if(g.linkedTo(x, y)==0) {
+				if(g.getTerminal(y*overlapWidth+x).equals(Terminal.FOREGROUND)) {
 					graphCut.put(y, xoffset+x, image1.get(y, xoffset+x));
 					sourceCount++;
-				} else if(g.linkedTo(x, y)==1) { 
+				} else if(g.getTerminal(y*overlapWidth+x).equals(Terminal.BACKGROUND)) { 
 					graphCut.put(y, xoffset+x, image2.get(y, x));
 					sinkCount++;
 				} else {
-					double[] empty = {0.0,255.0,0.0};
-					graphCut.put(y, xoffset+x, empty);
+					//double[] empty = {0.0,255.0,0.0};
+					//graphCut.put(y, xoffset+x, empty);
 					unlinkedCount++;
 				}
 			}
@@ -247,9 +185,12 @@ public class OptimalSeam implements SelectionListener {
 	public static void runEstimator(String in1, String in2, String out)
 	{
 		System.out.println("Starting Estimator");
-		OptimalSeam os = new OptimalSeam();
-		os.seamOverlayCut(in1,in2,out,true);
-		
+		try{
+			OptimalSeam os = new OptimalSeam();
+			os.seamOverlayCut(in1,in2,out,true);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		System.out.println("Completed Estimator");
 	}
 	
