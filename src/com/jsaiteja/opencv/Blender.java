@@ -25,7 +25,7 @@ import com.jsaiteja.utils.SelectionListener;
  */
 public class Blender implements SelectionListener {
 	
-	private static int PYRAMID_DEPTH = 1;
+	private static int PYRAMID_DEPTH = 4;
 	private static int PYRAMID_DEPTH_LESS1 = PYRAMID_DEPTH - 1;
 	
 	Mat image1,image2;
@@ -295,7 +295,7 @@ public class Blender implements SelectionListener {
 		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR1.get(i), GE);
-			//Core.subtract(gpR1.get(i-1), GE, L);
+			Core.subtract(gpR1.get(i-1), GE, L);
 			//lpR1.add(L.clone());
 			lpR1.add(GE.clone());
 		}
@@ -304,7 +304,7 @@ public class Blender implements SelectionListener {
 		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR2.get(i), GE);
-			//Core.subtract(gpR2.get(i-1), GE, L);
+			Core.subtract(gpR2.get(i-1), GE, L);
 			//lpR2.add(L.clone());
 			lpR2.add(GE.clone());
 		}
@@ -313,7 +313,7 @@ public class Blender implements SelectionListener {
 		for(int i=PYRAMID_DEPTH_LESS1;i>0;i--)
 		{
 			Imgproc.pyrUp(gpR3.get(i), GE);
-			//Core.subtract(gpR3.get(i-1), GE, L);
+			Core.subtract(gpR3.get(i-1), GE, L);
 			//lpR3.add(L.clone());
 			lpR3.add(GE.clone());
 		}

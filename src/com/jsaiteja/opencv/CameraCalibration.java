@@ -213,6 +213,9 @@ public class CameraCalibration {
 
 		double error = Calib3d.calibrateCamera(worldPointList, imagePointList, size, cameraMatrix, distCoeffs, rvecs, tvecs, flags);
 		
+		System.out.println("Camera Matrix");
+		System.out.println(cameraMatrix.dump());
+		
 		System.out.println("Rotation Matrices");
 		writeToResult("Rotation Matrices",bw);
 		for(Mat m : rvecs)
